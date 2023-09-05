@@ -13,48 +13,6 @@ export default class UserController {
   public static router(): Router {
     const router: Router = Router();
 
-    const transporter = nodemailer.createTransport({
-      service: "Gmail",
-      port: 465,
-      host: "smtp.gmail.com",
-      auth: {
-        user: "rizaldoaldo05@gmail.com",
-        pass: "rizaldo05",
-      },
-      secure: true,
-    });
-
-    router.post("/send-otp", async (req: Request, res: Response) => {
-      const dataOtp: { [key: string]: string } = {};
-      const { email } = req.body;
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      dataOtp[email] = otp;
-
-      const mailOptions = {
-        from: "rizaldoaldo05@gmail.com",
-        to: email,
-        subject: "otp",
-        text: `OTP ${otp}`,
-        html: "<b>Hey there! </b> <br> This is our first message sent with Nodemailer<br/>",
-      };
-
-      transporter.sendMail(mailOptions, (err: any, info: any) => {
-        if (err) {
-          console.log(err);
-          return res.status(500).json({
-            status: Status.Fail,
-            message: "Gagal mengirim OTP melalui email",
-          });
-        } else {
-          console.log("Email terkirim: " + info.response);
-          res.status(200).json({
-            status: Status.Success,
-            message: "OTP telah dikirimkan ke alamat email Anda",
-          });
-        }
-      });
-    });
-
     router.post(
       "/signup",
       body("username").notEmpty(),
