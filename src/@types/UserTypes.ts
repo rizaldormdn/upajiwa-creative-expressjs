@@ -1,8 +1,13 @@
 export type UserTypes = {
-  username: string;
+  firstname: string;
+  lastname: string;
   email: string;
   password: string;
-  role: string;
+  isAdministrator: boolean;
+  resetPasswordToken: {
+    token: string;
+    tokenExpiry: Date;
+  };
   createdAt: number;
   updatedAt: number;
 };

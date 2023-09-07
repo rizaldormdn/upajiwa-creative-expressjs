@@ -1,16 +1,18 @@
 require("dotenv").config();
 
-import mongoose from "mongoose";
+import mysql, { Connection } from "mysql2";
 import Router from "./Router";
 import Server from "./Server";
+import UserRepository from "./user/infrastructure/database/UserRepository";
 
-mongoose.connect(
-  `${process.env.MONGODB_URI}${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DB}`
-);
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "conection error: "));
-db.once("open", function () {
-  console.log("mongoDB Connected!");
+const connection: Connection = mysql.createConnection({
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
 });
 
-Server.run(Number(process.env.PORT), Router.run());
+const userRepository: UserRepository = new UserRepository(connection);
+
+Server.run(Number(process.env.PORT), Router.run(userRepository));
