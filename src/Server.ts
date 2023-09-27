@@ -1,6 +1,7 @@
 import express, { Express, Router } from "express";
 import path from "path";
 import Middleware from "./Middleware";
+
 export default class Server {
   public static run(port: number, router: Router) {
     const app: Express = express();

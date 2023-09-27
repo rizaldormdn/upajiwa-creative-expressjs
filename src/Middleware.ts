@@ -6,12 +6,22 @@ import Status from "./Status";
 
 export default class Middleware {
   public static cors(_: Request, res: Response, next: NextFunction) {
-    res.setHeader("Access-Control-Allow-Origin", String(process.env.ORIGINS));
+    const allowedOrigins = [
+      String(process.env.ORIGINS_WEB),
+      String(process.env.ORIGINS_CMS),
+    ];
+    const origin = _.headers.origin;
+    if (allowedOrigins.includes(String(origin))) {
+      res.setHeader("Access-Control-Allow-Origin", String(origin));
+    }
     res.setHeader(
       "Access-Control-Allow-Methods",
       "GET, POST, PUT, PATCH, DELETE, OPTIONS"
     );
-    res.setHeader("Access-Control-Allow-Headers", "content-type, authorization");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "content-type, authorization"
+    );
     next();
   }
 

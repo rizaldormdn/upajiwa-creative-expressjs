@@ -14,7 +14,13 @@ export default class UserRepository implements UserRepositoryInterface.default {
   public getUser(email: Email): Promise<User | undefined> {
     return new Promise<User | undefined>(async (resolve, reject) => {
       this._connection.query(
-        "SELECT first_name, last_name, salt,hashed_password,token, token_expiry, is_administrator FROM users WHERE email = ? LIMIT 1 ",
+        `SELECT 
+          first_name, 
+          last_name, 
+          salt,
+          hashed_password, 
+          is_administrator 
+          FROM users WHERE email = ? LIMIT 1`,
         [email.toString()],
         (err: any | null, result: any) => {
           if (err) {
@@ -38,17 +44,24 @@ export default class UserRepository implements UserRepositoryInterface.default {
     });
   }
   public saveUser(user: User): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this._connection.query(
-        "INSERT INTO users (first_name, last_name, email, salt, hashed_password, token, token_expiry) VALUES (?,?,?,?,?,?,?,?)",
+        `INSERT INTO users (
+          first_name, 
+          last_name, 
+          email, 
+          is_administrator,
+          salt, 
+          hashed_password
+          ) 
+          VALUES (?, ?, ?, ?, ?, ?)`,
         [
           user.name.first,
           user.name.last,
           user.email.toString(),
-          user.password?.salt,
-          user.password?.hashedPassword,
-          user.resetPasswordToken?.token,
-          user.resetPasswordToken?.tokenExpiry,
+          user.isAdministrator,
+          user.password!.salt,
+          user.password!.hashedPassword,
         ],
         (err: any | null, result: any) => {
           if (err) {
@@ -63,7 +76,12 @@ export default class UserRepository implements UserRepositoryInterface.default {
   public updateUser(user: User): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this._connection.query(
-        "UPDATE users SET first_name = ?, last_name = ?, email = ?, hashed_password = ?, token = ?, token_expiry = ? WHERE email = ? ",
+        `UPDATE users SET 
+          first_name = ?, 
+          last_name = ?, 
+          email = ?, 
+          hashed_password = ? 
+          WHERE email = ?`,
         [
           user.name.first,
           user.name.last,
